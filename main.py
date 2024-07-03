@@ -49,7 +49,7 @@ def ping():
 def keep_alive():
     url = "https://gemini-5nx0.onrender.com/ping"  # আপনার রেন্ডার URL এখানে বসান
     while True:
-        time.sleep(900)  # Ping every 5 minutes
+        time.sleep(520)  # Ping every 5 minutes
         try:
             response = requests.get(url)
             if response.status_code == 200:
