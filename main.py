@@ -4,10 +4,11 @@ import google.generativeai as genai
 import threading
 import time
 import requests
+from collections import deque
 
 app = Flask(__name__)
 
-# Get API key from Replit secrets
+# Get API key from environment variable
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 genai.configure(api_key=GEMINI_API_KEY)
@@ -36,10 +37,20 @@ def ask():
         return jsonify({"error": "Please provide both query and id parameters."}), 400
 
     if user_id not in chat_sessions:
-        chat_sessions[user_id] = model.start_chat(history=[])
+        chat_sessions[user_id] = {
+            "chat": model.start_chat(history=[]),
+            "history": deque(maxlen=25)  # Stores the last 30 messages
+        }
 
-    chat_session = chat_sessions[user_id]
+    chat_session = chat_sessions[user_id]["chat"]
+    history = chat_sessions[user_id]["history"]
+
+    # Add the user query to history
+    history.append(f"User: {query}")
     response = chat_session.send_message(query)
+    # Add the bot response to history
+    history.append(f"Bot: {response.text}")
+
     return jsonify({"response": response.text})
 
 @app.route('/ping', methods=['GET'])
@@ -47,9 +58,9 @@ def ping():
     return jsonify({"status": "alive"})
 
 def keep_alive():
-    url = "https://gemini-5nx0.onrender.com/ping"  # আপনার রেন্ডার URL এখানে বসান
+    url = "https://gemini-5nx0.onrender.com/ping"  # Replace with your actual URL
     while True:
-        time.sleep(520)  # Ping every 5 minutes
+        time.sleep(600)  # Ping every 15 minutes
         try:
             response = requests.get(url)
             if response.status_code == 200:
