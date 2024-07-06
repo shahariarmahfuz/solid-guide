@@ -39,7 +39,7 @@ def ask():
     if user_id not in chat_sessions:
         chat_sessions[user_id] = {
             "chat": model.start_chat(history=[]),
-            "history": deque(maxlen=25)  # Stores the last 30 messages
+            "history": deque(maxlen=5)  # Stores the last 30 messages
         }
 
     chat_session = chat_sessions[user_id]["chat"]
