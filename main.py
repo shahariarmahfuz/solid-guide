@@ -58,9 +58,9 @@ def ping():
     return jsonify({"status": "alive"})
 
 def keep_alive():
-    url = "https://gemini-5nx0.onrender.com/ping"  # Replace with your actual URL
+    url = "https://gemini-gz4x.onrender.com"  # Replace with your actual URL
     while True:
-        time.sleep(1200)  # Ping every 15 minutes
+        time.sleep(600)  # Ping every 15 minutes
         try:
             response = requests.get(url)
             if response.status_code == 200:
